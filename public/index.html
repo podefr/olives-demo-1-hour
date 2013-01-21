@@ -1,0 +1,30 @@
+<html>
+	<header>
+		<title>hello</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+	</header>
+	<body>
+
+		<div class="page-header">
+		  <h1>Charting demo using Olives + SVG + CouchDB + node.js in 1 hour<small> <a href="https://github.com/podefr/olives-demo-1-hour">checkout on GitHub</a></small></h1>
+		</div>
+
+
+
+
+	<script src="libs/require.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="libs/Emily.js"></script>
+	<script src="libs/Olives.js"></script>
+	<script>
+		requirejs.config({
+			baseUrl: 'app'
+		});
+
+		requirejs(['intro', 'chart'], function (Intro, Chart) {
+
+		});
+	</script>
+
+	</body>
+</html>
