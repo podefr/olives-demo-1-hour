@@ -13,7 +13,6 @@
 
 
 	<script src="libs/require.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
 	<script src="libs/Emily.js"></script>
 	<script src="libs/Olives.js"></script>
 	<script>
@@ -21,7 +20,16 @@
 			baseUrl: 'app'
 		});
 
-		requirejs(['intro', 'chart'], function (Intro, Chart) {
+		requirejs([
+			'/socket.io/socket.io.js',
+			'Intro',
+			'Chart',
+			'SocketIOTransport'
+		], function (io, Intro, Chart, SocketIOTransport) {
+
+			var transport = new SocketIOTransport(io, location.href);
+
+			transport.listen("hello", "hi", function (oh) { console.log(oh) })
 
 		});
 	</script>
