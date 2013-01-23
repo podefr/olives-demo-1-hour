@@ -1,11 +1,10 @@
-define(['text!templates/main.html', 'OObject', 'Store'],
+define(['text!templates/main.html', 'OObject'],
 
-function Main(view, OObject, Store, Bind) {
+function Main(view, OObject) {
 
 	return function MainConstructor(transport) {
 
-		var main = new OObject,
-			model = new Store({});
+		var main = new OObject;
 
 		main.template = view;
 
