@@ -10,12 +10,28 @@ function Main(view, OObject, Store, Bind) {
 		main.template = view;
 
 		main.plugins.add('server', {
-			uptime: function (node, time) {
+			uptime: function (node) {
 				transport.listen("Stats", {
-					method: "uptime",
-					refresh: time
+					method: "uptime"
 				}, function (uptime) {
-					node.innerHTML = uptime;
+					node.innerHTML = uptime + " seconds";
+				});
+			},
+
+			platform: function (node) {
+				transport.request("Stats", {
+					method: "platform"
+				}, function (platform) {
+					node.innerHTML = platform;
+				});
+			},
+
+			memoryUsage: function (node, type) {
+				transport.listen("Stats", {
+					method: "memoryUsage",
+					type: type
+				}, function (value) {
+					node.innerHTML = Math.round(value / 1000, 2) + " Kb";
 				});
 			}
 

@@ -25,3 +25,27 @@ olives.registerSocketIO(io);
 
 // Let's add the CouchDB handler coming from CouchDBTools
 olives.handlers.set("CouchDB", CouchDBTools.handler);
+
+olives.handlers.set("Stats", function (data, onEnd, onData) {
+
+	var methods = {
+		uptime: function () {
+			setInterval(function () {
+				onData(process.uptime());
+			}, 1000);
+		},
+
+		platform: function () {
+			onEnd(process.platform);
+		},
+
+		memoryUsage: function () {
+			setInterval(function () {
+				onData(process.memoryUsage()[data.type]);
+			}, 1000);
+		}
+	};
+
+	methods[data["method"]]();
+
+});
