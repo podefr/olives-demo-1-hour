@@ -25,10 +25,3 @@ olives.registerSocketIO(io);
 
 // Let's add the CouchDB handler coming from CouchDBTools
 olives.handlers.set("CouchDB", CouchDBTools.handler);
-
-olives.handlers.set("hello", function (data, onEnd, onData) {
-	setInterval(function () {
-		onData("hello! " + data);
-		console.log("si", data)
-	}, 2000);
-});
