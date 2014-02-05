@@ -2,7 +2,8 @@
 var connect = require("connect"),
 	http = require("http"),
 	socketIO = require("socket.io"),
-	olives = require("olives");
+	olives = require("olives"),
+	emily = require("emily");
 
 var io = socketIO.listen(
 	http.createServer(
@@ -19,29 +20,29 @@ var io = socketIO.listen(
 
 http.globalAgent.maxSockets = Infinity;
 
-// Need to tell Olives which socket.io to use
-olives.registerSocketIO(io);
+var handlers = new emily.Store({
+	"Stats": function (data, onEnd, onData) {
+		var methods = {
+			uptime: function () {
+				setInterval(function () {
+					onData(process.uptime());
+				}, 1000);
+			},
 
-olives.handlers.set("Stats", function (data, onEnd, onData) {
+			platform: function () {
+				onEnd(process.platform);
+			},
 
-	var methods = {
-		uptime: function () {
-			setInterval(function () {
-				onData(process.uptime());
-			}, 1000);
-		},
+			memoryUsage: function () {
+				setInterval(function () {
+					onData(process.memoryUsage()[data.type]);
+				}, 1000);
+			}
+		};
 
-		platform: function () {
-			onEnd(process.platform);
-		},
-
-		memoryUsage: function () {
-			setInterval(function () {
-				onData(process.memoryUsage()[data.type]);
-			}, 1000);
-		}
-	};
-
-	methods[data["method"]]();
-
+		methods[data["method"]]();
+	}
 });
+
+// Need to tell Olives which socket.io to use
+olives.registerSocketIO(io, handlers);

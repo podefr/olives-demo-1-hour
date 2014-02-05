@@ -2,6 +2,13 @@
 	<header>
 		<title>hello</title>
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<style type="text/css">
+			.container span {
+				font-weight: bold;
+				font-size: 24px;
+				color: #c3f;
+			}
+		</style>
 	</header>
 	<body>
 
@@ -13,35 +20,71 @@
       </div>
     </div>
 
-	<div id="main" class="container">
+	<section class="container">
+		<div class="hero-unit">
+			<h1>Statistiques du server</h1>
+			<p>
+				This page is for displaying the statistics of the server that serves this page for displaying the statistics of the server.
+			</p>
+		</div>
+		<div class="row">
+			<div class="span4">
+			  <h2>Uptime</h2>
+			  <span data-server="uptime"><span>
+			</div>
+			<div class="span4">
+			  <h2>Platform</h2>
+			  <span data-server="platform"></span>
+			</div>
+			<div class="span4">
+			  <h2>memoryUsage</h2>
+			  <p>rss: <span data-server="memoryUsage: rss"></span></p>
+			  <p>HeapTotal: <span data-server="memoryUsage: heapTotal"></span></p>
+			  <p>HeapUsed: <span data-server="memoryUsage: heapUsed"></span></p>
+			</div>
+		</div>
+	</section>
 
-	</div>
 
-
-	<script src="libs/require.js"></script>
-	<script src="libs/Emily.js"></script>
-	<script src="libs/Olives.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="libs/emily.js"></script>
+	<script src="libs/olives.js"></script>
 	<script>
-		require.config({
-			baseUrl: 'app',
-			paths: {
-				'templates': '../templates',
+
+		var olives = require("olives");
+		var transport = new olives.SocketIOTransport(io.connect('http://localhost'));
+		var main = new olives.OObject;
+
+		main.plugins.add('server', {
+			uptime: function (node) {
+				transport.listen("Stats", {
+					method: "uptime"
+				}, function (uptime) {
+					node.innerHTML = uptime + " seconds";
+				});
+			},
+
+			platform: function (node) {
+				transport.request("Stats", {
+					method: "platform"
+				}, function (platform) {
+					node.innerHTML = platform;
+				});
+			},
+
+			memoryUsage: function (node, type) {
+				transport.listen("Stats", {
+					method: "memoryUsage",
+					type: type
+				}, function (value) {
+					node.innerHTML = Math.round(value / 1000, 2) + " Kb";
+				});
 			}
-		});
-
-		require([
-			'/socket.io/socket.io.js',
-			'SocketIOTransport',
-			'Main'
-		], function (io, SocketIOTransport, Main) {
-
-			var transport = new SocketIOTransport(io, location.href);
-
-			var main = Main(transport);
-
-			main.place(document.querySelector("#main"));
 
 		});
+
+		main.alive(document.querySelector("section"));
+
 	</script>
 
 	</body>
